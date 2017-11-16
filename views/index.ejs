@@ -10,17 +10,23 @@
     <ng-view></ng-view>
 
     <!-- Libraries -->
+    <!-- Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-resource.min.js"></script>
+    <!--
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>-->
 
     <!-- Template -->
     <script type="text/ng-template" id="/todos.html">
-      Search: <input type="text" ng-model="search.name">
+      Search: <input type="text" ng-model="search.code">
       <ul>
-        <li ng-repeat="facture in factures | filter: search">
+        <!-- <li ng-repeat="facture in factures | filter:filterFunction"> -->
+        <li ng-repeat="facture in factures | filter:search">
           <input type="checkbox" ng-model="facture.termine" ng-change="update($index)">
-          <a ng-show="!editing[$index]" href="#/{{facture._id}}">{{facture.code + ' ' + facture.montantTTC}}</a>
+          <a ng-show="!editing[$index]" href="factures/{{facture._id}}">{{facture.code}}</a>
           <button ng-show="!editing[$index]" ng-click="edit($index)">edit</button>
 
           <input ng-show="editing[$index]" type="text" ng-model="facture.name">
@@ -43,15 +49,15 @@
     <script type="text/ng-template" id="/todoDetails.html">
       <h1>{{ facture.name }}</h1>
       termine: <input type="checkbox" ng-model="facture.termine"><br>
-      note: <textarea ng-model="facture.note"></textarea><br><br>
+      note: <textarea ng-model="facture.note"></textarea><br/><br/>
 
       <button ng-click="update()">Update</button>
       <button ng-click="remove()">Remove</button>
       <a href="/">Cancel</a>
     </script>
 
-
     <script>
+      /* global angular */
       angular.module('app', ['ngRoute', 'ngResource'])
 
         //---------------
@@ -133,6 +139,15 @@
               $scope.factures.splice(index, 1);
             });
           }
+          
+          $scope.filterFunction = function(facture) {
+            var query = $scope.search;
+            if(query!=null) {
+            	query = query.toLowerCase();
+            }
+            return facture.code.toLowerCase().match(query);
+          };
+          
         }])
 
         .controller('TodoDetailCtrl', ['$scope', '$routeParams', 'Todos', '$location', function ($scope, $routeParams, Todos, $location) {
